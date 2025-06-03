@@ -28,8 +28,8 @@ def render_and_write(env):
                         env["name"]: [
                             {
                                 "triggers": {
-                                    "name":    env["name"],
-                                    "network": env["network"]
+                                    "name":    "${var.name}",
+                                    "network": "${var.network}"
                                 },
                                 "provisioner": [
                                     {
@@ -54,9 +54,9 @@ def render_and_write(env):
 
 if __name__ == "__main__":
     # Limpia entornos viejos (si quieres)
-    if os.path.isdir(OUT_DIR):
-        import shutil
-        shutil.rmtree(OUT_DIR)
+    #if os.path.isdir(OUT_DIR):
+    #    import shutil
+    #    shutil.rmtree(OUT_DIR)
 
     for env in ENVS:
         render_and_write(env)
