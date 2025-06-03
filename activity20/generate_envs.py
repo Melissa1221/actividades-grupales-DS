@@ -28,8 +28,8 @@ def render_and_write(env):
                         env["name"]: [
                             {
                                 "triggers": {
-                                    "name":    "${var.name}",
-                                    "network": "${var.network}"
+                                    "name":    env["name"],
+                                    "network": env["network"]
                                 },
                                 "provisioner": [
                                     {
