@@ -17,15 +17,6 @@
           "description": "Nombre de la red local"
         }
       ]
-    },
-    {
-      "port": [
-        {
-          "type": "number",
-          "default": 8080,
-          "description": "Puerto de la aplicación"
-        }
-      ]
     }
   ]
 }

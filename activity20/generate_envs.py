@@ -1,11 +1,27 @@
 import os, json
 from shutil import copyfile
 
-# Parámetros de ejemplo para N entornos
-ENVS = [
-    {"name": f"app{i}", "network": f"net{i}"} for i in range(1, 11)
-]
+ENVS = []
+for i in range(1, 11):
+    name = f"app{i}"
+    port = 8000 + i
+    
+    if i == 3:
+        network = "net2-peered"  # cuando es app3
+    else:
+        network = f"net{i}"
+        
+    ENVS.append({
+        "name": name,
+        "network": network,
+        "port": port
+    })
 
+'''
+ENVS = [
+    {"name": f"app{i}", "network": f"net{i}", "port": 8000 + i} for i in range(1, 11)
+]
+'''
 MODULE_DIR = "modules/simulated_app"
 OUT_DIR    = "environments"
 
@@ -25,18 +41,19 @@ def render_and_write(env):
             {
                 "null_resource": [
                     {
-                        env["name"]: [
+                        f"local_server_{env['name']}": [
                             {
                                 "triggers": {
                                     "name":    env["name"],
-                                    "network": env["network"]
+                                    "network": env["network"],
+                                    "port":    env["port"]
                                 },
                                 "provisioner": [
                                     {
                                         "local-exec": {
                                             "command": (
-                                                f"echo 'Arrancando servidor "
-                                                f"{env['name']} en red {env['network']}'"
+                                                f"echo 'Arrancando servidor '"
+                                                f"{env['name']} en red {env['network']} con puerto {env['port']}"
                                             )
                                         }
                                     }
