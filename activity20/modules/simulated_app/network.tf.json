@@ -4,8 +4,8 @@
             "name": [
                 {
                     "type": "string",
-                    "default": "aplication-server",
-                    "description": "Nombre del servidor local"
+                    "default": "application-server",
+                    "description": "Nombre de la aplicación del servidor"
                 }
             ]
         },
