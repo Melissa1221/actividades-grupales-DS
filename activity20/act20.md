@@ -14,7 +14,7 @@ terraform apply
 ```
 
 <div align = "center">
-    <img src="img/fase1_1.jpg" width="600">
+    <img src="img/fase1_1.jpg" width="500">
 </div>
 
 3. Ahora, procedemos a cambiar el valor *default* de `network` de `modules/simulated_app/network.tf.json`, pasando de `local-network` a `lab-net`.
@@ -26,7 +26,7 @@ terraform apply
 Esto indica que solamente detectó el cambio de nombre de la red y no de todo el recurso.
 
 <div align = "center">
-    <img src="img/fase1_2.jpg" width="600">
+    <img src="img/fase1_2.jpg" width="500">
 </div>
 
 ### Preguntas
@@ -58,14 +58,14 @@ terraform apply
 4. Como trabajamos de manera local, para simular un cambio fuera de Terraform, modificamos manualmente `terraform.tfstate`, cambiando a `"name": "hacked-app"`.
 
 <div align = "center">
-    <img src="img/fase2_1.jpg" width="600">
+    <img src="img/fase2_1.jpg" width="500">
 </div>
 
 5. Ahora, al ejecutar `terraform plan`, Terraform comparará la estructura de `main.tf.json` con el de `terraform.tfstate`.
 6. Terraform detecta la diferencia entre ambos archivos y muestra `"name" = "hacked-app" -> "app2"`, o sea, indicando un drift.
 
 <div align = "center">
-    <img src="img/fase2_2.jpg" width="600">
+    <img src="img/fase2_2.jpg" width="500">
 </div>
 
 ## Fase 3
@@ -75,7 +75,7 @@ terraform apply
 Se aplican commits siguiendo las buenas prácticas, agregando mensajes claros indicando qué cosa fue modificado y por qué. En este caso modificamos como ejemplo se cambia el valor por defecto y la descripción de `name`.
 
 <div align = "center">
-    <img src="img/fase3_1.jpg" width="600">
+    <img src="img/fase3_1.jpg" width="500">
 </div>
 
 ### Linting y formateo
@@ -83,7 +83,7 @@ Se aplican commits siguiendo las buenas prácticas, agregando mensajes claros in
 Formateamos el archivo `network.tf.json` con la herramienta jq, ayudándonos a visualizar el contenido de dicho archivo en una forma más legible.
 
 <div align = "center">
-    <img src="img/fase3_2.jpg" width="600">
+    <img src="img/fase3_2.jpg" width="500">
 </div>
 
 ### Nomenclatura de recursos
@@ -97,7 +97,7 @@ Se mejora el nombre del recurso para que sea más adecuado y para una mejor indi
 Se añade la variable `port` en `network.tf.json` y se añade en la parte de *trigger* para que cada entorno al momento de crearse se le asigne un puerto.
 
 <div align = "center">
-    <img src="img/fase3_4.jpg" width="600">
+    <img src="img/fase3_4.jpg" width="500">
 </div>
 
 ### Parametrizar dependencias
@@ -105,11 +105,11 @@ Se añade la variable `port` en `network.tf.json` y se añade en la parte de *tr
 Se añade condicionales al momento de crearse los entornos, para que cuando se cree `app3` se le asigne como valor de network uno especial, simulando que su network depende de `app2`
 
 <div align = "center">
-    <img src="img/fase3_5_1.jpg" width="600">
+    <img src="img/fase3_5_1.jpg" width="500">
 </div>
 
 <div align = "center">
-    <img src="img/fase3_5.jpg" width="600">
+    <img src="img/fase3_5.jpg" width="500">
 </div>
 
 ## Fase 4
@@ -121,3 +121,42 @@ Primero, podriamos aplicar validaciones con herramientas como `jq`. Otra opción
 Podemos usar variables de entorno con Python para leer por ejemplo `api_key` en lugar de hardcodearlos. Al momento de generar el `main.tf.json` se marca la variable `sensitive` como `true`, evitando escribir su valor en el disco. Una alternativa sería usar un archivo `terraform.tfvars.json` que no esté incluido en el `.gitignore` y que contenga claves cifradas por el CI/CD.
 -   **¿Qué workflows de revisión aplicarías a los JSON generados?**
 Podríamos usar flujo de CI que contengan validaciones automáticas, como por ejemplo ejecutar `terraform init`, `plan` y `validate` en cada pullrequest. También agregar un formateo con `jq`. Otra opción es revisar los PRs generados visualmente con herramientas que pasen de JSON a HCL, o que simplemente generen un resumen del plan. También registrar cambios importantes o sensibles con git u otro controlador de versiones, por ejemplo un commit que solo indique el cambio de description, u otro que cambie default.
+
+## Ejercicio 1
+Primero se agrega las variables `server1_name` y `server2_name` a `network.tf.json`. Estas variables sirven para indicar qué servidores manejará el balanceador, por defecto son `app1` y `app2`.
+
+<div align = "center">
+    <img src="img/ejer1_1.jpg" width="500">
+</div>
+
+Ahora, en `generate_envs.py` se crea el recurso balanceador con triggers (para ver cambios en `server1_name` y `server2_name`)y dependencias, esperando a que existan ambos servidores para desplegarse
+
+<div align = "center">
+    <img src="img/ejer1_2.jpg" width="500">
+</div>
+
+Se tuvo que juntar el `server1`, `server2` y el balanceador en un solo entorno ya que dicho balanceador necesita que ambos servidores existan antes de activarse. Entonces, cuando realizamos un cambio luego de `terraform apply`:
+
+<div align = "center">
+    <img src="img/ejer1_3.jpg" width="500">
+</div>
+
+## Ejercicio 2
+
+Primero, se crea el `MODULE_DIR` y `OUT_DIR` que son rutas que indicarán donde estarán los entornos creados por terraform.
+
+Luego, encontramos las opciones CLI, lo cual nos permite decidir cuantos entornos crear, que nombre llevarán o con que puerto comenzar al momento de ejecutar el script.
+
+<div align = "center">
+    <img src="img/ejer2_1.jpg" width="500">
+</div>
+
+Al ejecutar
+```python
+python generate_envs.py  --count 5 --prefix aplicacion --base-port 9000
+```
+se crean 5 entornos: `aplicacion1-5` usando puertos 9001 al 9005 respectivamente.
+
+<div align = "center">
+    <img src="img/ejer2_2.jpg" width="500">
+</div>

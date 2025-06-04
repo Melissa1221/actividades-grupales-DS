@@ -10,6 +10,24 @@
       ]
     },
     {
+      "server1_name": [
+        {
+          "type": "string",
+          "default": "app1",
+          "description": "Nombre del primer servidor para el balanceador"
+        }
+      ]
+    },
+    {
+      "server2_name": [
+        {
+          "type": "string",
+          "default": "app2",
+          "description": "Nombre del segundo servidor para el balanceador"
+        }
+      ]
+    },
+    {
       "network": [
         {
           "type": "string",
