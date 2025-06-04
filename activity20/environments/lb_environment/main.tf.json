@@ -1,0 +1,74 @@
+{
+    "resource": [
+        {
+            "null_resource": [
+                {
+                    "local_server_app1": [
+                        {
+                            "provisioner": [
+                                {
+                                    "local-exec": {
+                                        "command": "echo 'Servidor app1 en red main-network puerto 8001'"
+                                    }
+                                }
+                            ],
+                            "triggers": {
+                                "name": "app1",
+                                "network": "main-network",
+                                "port": 8001
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "null_resource": [
+                {
+                    "local_server_app2": [
+                        {
+                            "provisioner": [
+                                {
+                                    "local-exec": {
+                                        "command": "echo 'Servidor app2 en red main-network puerto 8002'"
+                                    }
+                                }
+                            ],
+                            "triggers": {
+                                "name": "app2",
+                                "network": "main-network",
+                                "port": 8002
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "null_resource": [
+                {
+                    "load_balancer": [
+                        {
+                            "depends_on": [
+                                "null_resource.local_server_app1",
+                                "null_resource.local_server_app2"
+                            ],
+                            "provisioner": [
+                                {
+                                    "local-exec": {
+                                        "command": "echo 'Balanceador para app1 y app2 en red main-network'"
+                                    }
+                                }
+                            ],
+                            "triggers": {
+                                "network": "main-network",
+                                "server1_name": "app1",
+                                "server2_name": "app2"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
