@@ -3,16 +3,17 @@
     {
       "null_resource": [
         {
-          "hello-server": [
+          "local-server": [
             {
               "triggers": {
                 "name": "${var.name}",
-                "network": "${var.network}"
+                "network": "${var.network}",
+                "port": "${var.port}"
               },
               "provisioner": [
                 {
                   "local-exec": {
-                    "command": "echo 'Arrancando servidor ${var.name} en red ${var.network}'"
+                    "command": "echo 'Arrancando servidor ${var.name} en red ${var.network} usando puerto ${var.port}'"
                   }
                 }
               ]
