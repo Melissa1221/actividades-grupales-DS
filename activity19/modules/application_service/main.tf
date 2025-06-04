@@ -4,6 +4,8 @@ variable "app_port"                 { type = number }
 variable "base_install_path"        { type = string }
 variable "global_message_from_root" { type = string }
 variable "python_exe"               { type = string }
+variable "app_connection_string"    { type = string }
+variable "deployment_id"            { type = string }
 
 locals {
   install_path = "${var.base_install_path}/${var.app_name}_v${var.app_version}"
@@ -24,6 +26,8 @@ data "template_file" "app_config" {
     app_name_tpl    = var.app_name
     app_version_tpl = var.app_version
     port_tpl        = var.app_port
+    deployment_id_tpl = var.deployment_id
+    connection_string_tpl = var.app_connection_string
     deployed_at_tpl = timestamp()
     message_tpl     = var.global_message_from_root
   }
@@ -40,9 +44,9 @@ data "external" "app_metadata_py" {
 
   query = merge(
     {
-      app_name   = var.app_name
-      version    = var.app_version
-      input_data = "datos_adicionales_para_python"
+      app_name      = var.app_name
+      version       = var.app_version
+      deployment_id = var.deployment_id
     },
     {
       q1  = "v1",  q2  = "v2",  q3  = "v3",  q4  = "v4",  q5  = "v5",

@@ -2,14 +2,17 @@
     "applicationName": "${app_name_tpl}",
     "version": "${app_version_tpl}",
     "listenPort": ${port_tpl},
+    "deploymentId": "${deployment_id_tpl}",
     "deploymentTime": "${deployed_at_tpl}",
+    %{ if connection_string_tpl != "" }
+    "connectionString": "${connection_string_tpl}",
+    %{ endif }
     "notes": "Este es un archivo de configuración autogenerado. ${message_tpl}",
     "settings": {
         "featureA": true,
         "featureB": false,
         "maxConnections": 100,
         "logLevel": "INFO"
-        // Líneas de settings simulados
         ,"s1": "val1", "s2": "val2", "s3": "val3", "s4": "val4", "s5": "val5"
         ,"s6": "val6", "s7": "val7", "s8": "val8", "s9": "val9", "s10": "val10"
         ,"s11": "val11", "s12": "val12", "s13": "val13", "s14": "val14", "s15": "val15"

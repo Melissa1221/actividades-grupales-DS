@@ -28,12 +28,17 @@ locals {
 
 locals {
   common_app_config = {
-    app1 = { version = "1.0.2", port = 8081 }
-    app2 = { version = "0.5.0", port = 8082 }
+    app1 = { version = "1.0.2", port = 8081, connection_string_tpl = ""  }
+    app2 = { version = "0.5.0", port = 8082, connection_string_tpl = ""  }
+    database = { version = "1.0.0", port = 5432, connection_string_tpl = "path/to/database" }
     # Se pueden añadir más líneas fácilmente
     # app3 = { version = "2.1.0", port = 8083 }
     # app4 = { version = "1.0.0", port = 8084 }
   }
+}
+
+data "external" "global_metadata" {
+  program = [local.python_executable_full, "${path.cwd}/scripts/python/generate_global_metadata.py"]
 }
 
 module "simulated_apps" {
@@ -43,8 +48,10 @@ module "simulated_apps" {
   app_name                 = each.key
   app_version              = each.value.version
   app_port                 = each.value.port
+  app_connection_string    = try(each.value.connection_string_tpl,null)
   base_install_path        = "${path.cwd}/generated_environment/services"
-  global_message_from_root = var.mensaje_global # Pasar la variable sensible
+  global_message_from_root = var.mensaje_global
+  deployment_id            = data.external.global_metadata.result.deployment_id
   python_exe               = local.python_executable_full 
 }
 
